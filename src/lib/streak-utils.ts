@@ -76,13 +76,13 @@ export async function logActivity(
 
   if (actionType === 'ayah_completed' && existing) return; // prevent duplicate
 
-  await supabase.from('activities').insert({
+  await supabase.from('activities').insert([{
     user_id: userId,
     action_type: actionType,
     ayah_reference: ayahReference || null,
-    metadata: metadata || {},
+    metadata: (metadata || {}) as import('@/integrations/supabase/types').Json,
     date: today,
-  });
+  }]);
 
   await updateStreak(userId);
 }
