@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchAyah, getAyahByMood, getMoodAyahExplanation, type AyahData } from '@/lib/quran-api';
-import { logActivity } from '@/lib/streak-utils';
+import { logActivity, getStreakStatus, type StreakResult } from '@/lib/streak-utils';
 import AppLayout from '@/components/AppLayout';
 import StatCard from '@/components/StatCard';
 import MoodCheckin from '@/components/MoodCheckin';
 import AyahDisplay from '@/components/AyahDisplay';
+import StreakRecovery from '@/components/StreakRecovery';
 import { PageSkeleton } from '@/components/UIStates';
 import { Button } from '@/components/ui/button';
 import { Flame, BookOpen, PenLine, Target, CheckCircle2, MessageCircle, Bookmark, RefreshCw } from 'lucide-react';
@@ -22,6 +23,8 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ reflections: 0, goals: 0, todayCompleted: false });
   const [currentMood, setCurrentMood] = useState<string | null>(null);
+  const [streakInfo, setStreakInfo] = useState<StreakResult | null>(null);
+  const [showRecovery, setShowRecovery] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -33,13 +36,17 @@ export default function DashboardPage() {
     setLoading(true);
     
     const today = new Date().toISOString().split('T')[0];
-    const [ayahData, reflectionsRes, goalsRes, todayActivityRes, moodRes] = await Promise.all([
+    const [ayahData, reflectionsRes, goalsRes, todayActivityRes, moodRes, streakResult] = await Promise.all([
       fetchAyah(),
       supabase.from('reflections').select('id', { count: 'exact' }).eq('user_id', user.id),
       supabase.from('goals').select('id', { count: 'exact' }).eq('user_id', user.id).eq('completed', false),
       supabase.from('activities').select('id').eq('user_id', user.id).eq('action_type', 'ayah_completed').eq('date', today),
       supabase.from('moods').select('mood').eq('user_id', user.id).eq('date', today).maybeSingle(),
+      getStreakStatus(user.id),
     ]);
+
+    setStreakInfo(streakResult);
+    setShowRecovery(streakResult.missedDays > 0);
 
     if (ayahData) {
       setAyah(ayahData);
@@ -114,6 +121,15 @@ export default function DashboardPage() {
           <StatCard label="Reflections" value={stats.reflections} icon={<PenLine className="h-4 w-4" />} />
           <StatCard label="Active Goals" value={stats.goals} icon={<Target className="h-4 w-4" />} />
         </div>
+
+        {/* Streak Recovery Banner */}
+        {streakInfo && streakInfo.missedDays > 0 && showRecovery && (
+          <StreakRecovery
+            missedDays={streakInfo.missedDays}
+            previousStreak={streakInfo.previousStreak}
+            onDismiss={() => setShowRecovery(false)}
+          />
+        )}
 
         {/* Quick actions */}
         <div className="flex flex-wrap gap-2">
