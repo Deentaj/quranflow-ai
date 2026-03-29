@@ -122,6 +122,15 @@ export default function DashboardPage() {
           <StatCard label="Active Goals" value={stats.goals} icon={<Target className="h-4 w-4" />} />
         </div>
 
+        {/* Streak Recovery Banner */}
+        {streakInfo && streakInfo.missedDays > 0 && showRecovery && (
+          <StreakRecovery
+            missedDays={streakInfo.missedDays}
+            previousStreak={streakInfo.previousStreak}
+            onDismiss={() => setShowRecovery(false)}
+          />
+        )}
+
         {/* Quick actions */}
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate('/reconnect')}>
