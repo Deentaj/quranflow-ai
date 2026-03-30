@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/AppLayout';
 import { Button } from '@/components/ui/button';
 import { PageSkeleton } from '@/components/UIStates';
-import { FileText, RefreshCw, Calendar, Activity, PenLine, Smile, Flame } from 'lucide-react';
+import { FileText, RefreshCw, Calendar, Activity, PenLine, Smile, Flame, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -23,6 +23,20 @@ export default function WeeklyReportPage() {
   const [report, setReport] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<ReportMetadata | null>(null);
   const [loading, setLoading] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  const downloadPDF = async () => {
+    if (!reportRef.current) return;
+    const html2pdf = (await import('html2pdf.js')).default;
+    const opt = {
+      margin: [0.75, 0.75],
+      filename: `weekly-report-${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+    };
+    html2pdf().set(opt).from(reportRef.current).save();
+  };
 
   const generateReport = async () => {
     if (!user) return;
@@ -61,10 +75,17 @@ export default function WeeklyReportPage() {
             <h1 className="font-heading text-3xl font-bold text-foreground">Weekly Report</h1>
             <p className="text-muted-foreground mt-1">AI-generated spiritual summary of your week</p>
           </div>
-          <Button onClick={generateReport} disabled={loading} className="rounded-xl">
-            {loading ? <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" /> : <FileText className="h-4 w-4 mr-1.5" />}
-            {loading ? 'Generating...' : report ? 'Regenerate' : 'Generate Report'}
-          </Button>
+          <div className="flex gap-2">
+            {report && (
+              <Button onClick={downloadPDF} variant="outline" className="rounded-xl">
+                <Download className="h-4 w-4 mr-1.5" /> Download PDF
+              </Button>
+            )}
+            <Button onClick={generateReport} disabled={loading} className="rounded-xl">
+              {loading ? <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" /> : <FileText className="h-4 w-4 mr-1.5" />}
+              {loading ? 'Generating...' : report ? 'Regenerate' : 'Generate Report'}
+            </Button>
+          </div>
         </div>
 
         {loading && (
@@ -120,7 +141,7 @@ export default function WeeklyReportPage() {
             animate={{ opacity: 1, y: 0 }}
             className="glass-card rounded-2xl p-6 md:p-8"
           >
-            <div className="prose prose-sm dark:prose-invert max-w-none
+            <div ref={reportRef} className="prose prose-sm dark:prose-invert max-w-none
               prose-headings:font-heading prose-headings:text-foreground
               prose-h1:text-2xl prose-h1:mb-4
               prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-2
