@@ -11,7 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { EmptyState, PageSkeleton } from '@/components/UIStates';
-import { PenLine, Plus, Search, Trash2, Edit } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { PenLine, Plus, Search, Trash2, Edit, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -43,7 +44,7 @@ export default function ReflectionsPage() {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
 
   // Form state
-  const [form, setForm] = useState({ ayahRef: searchParams.get('ayah') || '', text: '', mood: '' as string });
+  const [form, setForm] = useState({ ayahRef: searchParams.get('ayah') || '', text: '', mood: '' as string, isPublic: false });
 
   useEffect(() => { loadReflections(); }, [user]);
 
@@ -66,6 +67,7 @@ export default function ReflectionsPage() {
         ayah_reference: form.ayahRef || null,
         reflection_text: form.text,
         mood: (form.mood || null) as MoodType | null,
+        is_public: form.isPublic,
       }).eq('id', editingId);
       toast.success('Reflection updated.');
     } else {
@@ -74,12 +76,13 @@ export default function ReflectionsPage() {
         ayah_reference: form.ayahRef || null,
         reflection_text: form.text,
         mood: (form.mood || null) as MoodType | null,
+        is_public: form.isPublic,
       }]);
       await logActivity(user.id, 'reflection_written', form.ayahRef || undefined);
       toast.success('Reflection saved. Beautiful.');
     }
     
-    setForm({ ayahRef: '', text: '', mood: '' });
+    setForm({ ayahRef: '', text: '', mood: '', isPublic: false });
     setEditingId(null);
     setDialogOpen(false);
     loadReflections();
@@ -87,7 +90,7 @@ export default function ReflectionsPage() {
 
   const handleEdit = (r: Reflection) => {
     setEditingId(r.id);
-    setForm({ ayahRef: r.ayah_reference || '', text: r.reflection_text, mood: r.mood || '' });
+    setForm({ ayahRef: r.ayah_reference || '', text: r.reflection_text, mood: r.mood || '', isPublic: (r as any).is_public || false });
     setDialogOpen(true);
   };
 
@@ -119,7 +122,7 @@ export default function ReflectionsPage() {
             <h1 className="font-heading text-3xl font-bold text-foreground">Reflection Journal</h1>
             <p className="text-muted-foreground mt-1">Your private spiritual journal</p>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) { setEditingId(null); setForm({ ayahRef: '', text: '', mood: '' }); } }}>
+          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) { setEditingId(null); setForm({ ayahRef: '', text: '', mood: '', isPublic: false }); } }}>
             <DialogTrigger asChild>
               <Button className="rounded-xl"><Plus className="h-4 w-4 mr-1.5" /> New</Button>
             </DialogTrigger>
@@ -144,6 +147,16 @@ export default function ReflectionsPage() {
                 <div>
                   <Label>Your reflection</Label>
                   <Textarea placeholder="What's on your heart..." value={form.text} onChange={e => setForm(f => ({ ...f, text: e.target.value }))} className="mt-1 rounded-xl min-h-[120px]" />
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-border p-3">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">Share publicly</p>
+                      <p className="text-xs text-muted-foreground">Others can read and react to this reflection</p>
+                    </div>
+                  </div>
+                  <Switch checked={form.isPublic} onCheckedChange={v => setForm(f => ({ ...f, isPublic: v }))} />
                 </div>
                 <Button onClick={handleSubmit} className="w-full rounded-xl">{editingId ? 'Update' : 'Save Reflection'}</Button>
               </div>
