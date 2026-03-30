@@ -16,6 +16,7 @@ import ReflectionsPage from "./pages/ReflectionsPage";
 import ProgressPage from "./pages/ProgressPage";
 import GoalsPage from "./pages/GoalsPage";
 import BookmarksPage from "./pages/BookmarksPage";
+import WeeklyReportPage from "./pages/WeeklyReportPage";
 import CommunityFeedPage from "./pages/CommunityFeedPage";
 import ReconnectPage from "./pages/ReconnectPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/goals" element={<ProtectedRoute><GoalsPage /></ProtectedRoute>} />
             <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPage /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><CommunityFeedPage /></ProtectedRoute>} />
+            <Route path="/weekly-report" element={<ProtectedRoute><WeeklyReportPage /></ProtectedRoute>} />
             <Route path="/reconnect" element={<ProtectedRoute><ReconnectPage /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
