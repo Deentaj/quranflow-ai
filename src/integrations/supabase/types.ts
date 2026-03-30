@@ -263,12 +263,45 @@ export type Database = {
         }
         Relationships: []
       }
+      reflection_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          reaction_type: string
+          reflection_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reaction_type?: string
+          reflection_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reaction_type?: string
+          reflection_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reflection_reactions_reflection_id_fkey"
+            columns: ["reflection_id"]
+            isOneToOne: false
+            referencedRelation: "reflections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reflections: {
         Row: {
           ayah_reference: string | null
           created_at: string
           date: string
           id: string
+          is_public: boolean
           mood: Database["public"]["Enums"]["mood_type"] | null
           reflection_text: string
           updated_at: string
@@ -279,6 +312,7 @@ export type Database = {
           created_at?: string
           date?: string
           id?: string
+          is_public?: boolean
           mood?: Database["public"]["Enums"]["mood_type"] | null
           reflection_text: string
           updated_at?: string
@@ -289,6 +323,7 @@ export type Database = {
           created_at?: string
           date?: string
           id?: string
+          is_public?: boolean
           mood?: Database["public"]["Enums"]["mood_type"] | null
           reflection_text?: string
           updated_at?: string
