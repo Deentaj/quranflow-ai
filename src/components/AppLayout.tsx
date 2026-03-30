@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard, BookOpen, MessageCircle, PenLine,
-  BarChart3, Target, Bookmark, RefreshCw, User, LogOut, Sparkles
+  BarChart3, Target, Bookmark, RefreshCw, User, LogOut, Sparkles, Users
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +11,7 @@ const navItems = [
   { path: '/daily-ayah', label: 'Daily Ayah', icon: BookOpen },
   { path: '/ai-assistant', label: 'Companion', icon: MessageCircle },
   { path: '/reflections', label: 'Reflections', icon: PenLine },
+  { path: '/community', label: 'Community', icon: Users },
   { path: '/progress', label: 'Progress', icon: BarChart3 },
   { path: '/goals', label: 'Goals', icon: Target },
   { path: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
