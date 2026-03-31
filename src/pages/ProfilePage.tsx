@@ -8,8 +8,11 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { User, LogOut } from 'lucide-react';
+import ReminderSettings from '@/components/ReminderSettings';
+import { useReminder } from '@/hooks/useReminder';
 
 export default function ProfilePage() {
+  useReminder();
   const { user, profile, signOut, refreshProfile } = useAuth();
   const [name, setName] = useState(profile?.full_name || '');
   const [language, setLanguage] = useState(profile?.preferred_language || 'en');
@@ -44,6 +47,7 @@ export default function ProfilePage() {
           <div><Label>Daily Goal (ayahs)</Label><Input type="number" min="1" value={dailyGoal} onChange={e => setDailyGoal(e.target.value)} className="mt-1 rounded-xl" /></div>
           <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl">{saving ? 'Saving...' : 'Save Changes'}</Button>
         </div>
+        <ReminderSettings />
         <Button variant="outline" className="w-full rounded-xl" onClick={signOut}><LogOut className="h-4 w-4 mr-2" /> Sign Out</Button>
       </motion.div>
     </AppLayout>

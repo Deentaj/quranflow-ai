@@ -12,6 +12,8 @@ interface Profile {
   longest_streak: number;
   last_active_date: string | null;
   onboarding_completed: boolean;
+  reminder_enabled: boolean;
+  reminder_time: string;
 }
 
 interface AuthContextType {
