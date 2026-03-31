@@ -8,8 +8,11 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { User, LogOut } from 'lucide-react';
+import ReminderSettings from '@/components/ReminderSettings';
+import { useReminder } from '@/hooks/useReminder';
 
 export default function ProfilePage() {
+  useReminder();
   const { user, profile, signOut, refreshProfile } = useAuth();
   const [name, setName] = useState(profile?.full_name || '');
   const [language, setLanguage] = useState(profile?.preferred_language || 'en');
