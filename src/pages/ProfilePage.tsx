@@ -47,6 +47,7 @@ export default function ProfilePage() {
           <div><Label>Daily Goal (ayahs)</Label><Input type="number" min="1" value={dailyGoal} onChange={e => setDailyGoal(e.target.value)} className="mt-1 rounded-xl" /></div>
           <Button onClick={handleSave} disabled={saving} className="w-full rounded-xl">{saving ? 'Saving...' : 'Save Changes'}</Button>
         </div>
+        <ReminderSettings />
         <Button variant="outline" className="w-full rounded-xl" onClick={signOut}><LogOut className="h-4 w-4 mr-2" /> Sign Out</Button>
       </motion.div>
     </AppLayout>
