@@ -99,6 +99,9 @@ export default function DailyAyahPage() {
           <>
             <AyahDisplay ayah={ayah} whyItMatters={explanation?.whyItMatters} applyToday={explanation?.applyToday} />
 
+            {/* Tafsir viewer */}
+            <TafsirViewer verseKey={ayah.verseKey} />
+
             {/* Reflection prompt */}
             <div className="glass-card rounded-2xl p-5">
               <h3 className="font-heading text-lg font-semibold mb-2">Reflection Prompt</h3>

@@ -86,6 +86,18 @@ export async function fetchAyah(verseKey?: string): Promise<AyahData | null> {
   }
 }
 
+export async function fetchTafsir(verseKey: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/quran/tafsirs/169?verse_key=${verseKey}`);
+    const data = await res.json();
+    const text = data.tafsirs?.[0]?.text || '';
+    return text.replace(/<[^>]*>/g, '') || null;
+  } catch (error) {
+    console.error('Error fetching tafsir:', error);
+    return null;
+  }
+}
+
 export function getAyahByMood(mood: string): string {
   const ayahs = MOOD_AYAHS[mood] || MOOD_AYAHS.calm;
   return ayahs[Math.floor(Math.random() * ayahs.length)];
