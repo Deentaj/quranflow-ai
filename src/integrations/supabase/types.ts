@@ -202,6 +202,8 @@ export type Database = {
           longest_streak: number | null
           onboarding_completed: boolean | null
           preferred_language: string | null
+          reminder_enabled: boolean | null
+          reminder_time: string | null
           updated_at: string
           user_id: string
         }
@@ -215,6 +217,8 @@ export type Database = {
           longest_streak?: number | null
           onboarding_completed?: boolean | null
           preferred_language?: string | null
+          reminder_enabled?: boolean | null
+          reminder_time?: string | null
           updated_at?: string
           user_id: string
         }
@@ -228,6 +232,8 @@ export type Database = {
           longest_streak?: number | null
           onboarding_completed?: boolean | null
           preferred_language?: string | null
+          reminder_enabled?: boolean | null
+          reminder_time?: string | null
           updated_at?: string
           user_id?: string
         }
