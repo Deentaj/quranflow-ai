@@ -6,6 +6,7 @@ import { fetchAyah, getAyahByMood, getMoodAyahExplanation, type AyahData } from 
 import { logActivity } from '@/lib/streak-utils';
 import AppLayout from '@/components/AppLayout';
 import AyahDisplay from '@/components/AyahDisplay';
+import TafsirViewer from '@/components/TafsirViewer';
 import { PageSkeleton } from '@/components/UIStates';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
