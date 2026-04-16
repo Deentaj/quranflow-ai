@@ -98,6 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_challenges: {
+        Row: {
+          challenge_type: string
+          completed: boolean | null
+          created_at: string
+          current_value: number
+          date: string
+          description: string
+          id: string
+          target_value: number
+          title: string
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          challenge_type: string
+          completed?: boolean | null
+          created_at?: string
+          current_value?: number
+          date?: string
+          description: string
+          id?: string
+          target_value?: number
+          title: string
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          challenge_type?: string
+          completed?: boolean | null
+          created_at?: string
+          current_value?: number
+          date?: string
+          description?: string
+          id?: string
+          target_value?: number
+          title?: string
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           completed: boolean | null
@@ -234,6 +276,42 @@ export type Database = {
           preferred_language?: string | null
           reminder_enabled?: boolean | null
           reminder_time?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reading_progress: {
+        Row: {
+          completed: boolean | null
+          created_at: string
+          id: string
+          last_read_at: string | null
+          last_verse_read: number
+          surah_number: number
+          total_verses: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          last_read_at?: string | null
+          last_verse_read?: number
+          surah_number: number
+          total_verses: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          created_at?: string
+          id?: string
+          last_read_at?: string | null
+          last_verse_read?: number
+          surah_number?: number
+          total_verses?: number
           updated_at?: string
           user_id?: string
         }

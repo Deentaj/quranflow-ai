@@ -2,9 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard, BookOpen, MessageCircle, PenLine,
-  BarChart3, Target, Bookmark, RefreshCw, User, LogOut, Sparkles, Users, FileText
+  BarChart3, Target, Bookmark, RefreshCw, User, LogOut, Sparkles, Users, FileText,
+  Swords, BookMarked
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,6 +18,8 @@ const navItems = [
   { path: '/progress', label: 'Progress', icon: BarChart3 },
   { path: '/goals', label: 'Goals', icon: Target },
   { path: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
+  { path: '/challenges', label: 'Challenges', icon: Swords },
+  { path: '/reading-tracker', label: 'Reading', icon: BookMarked },
   { path: '/reconnect', label: 'Reconnect', icon: RefreshCw },
   { path: '/profile', label: 'Profile', icon: User },
 ];
@@ -30,11 +34,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-64 flex-col bg-secondary text-secondary-foreground fixed inset-y-0 left-0 z-30">
-        <div className="p-6 border-b border-sidebar-border">
+        <div className="p-6 border-b border-sidebar-border flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" />
             <span className="font-heading text-xl font-semibold">QuranFlow AI</span>
           </Link>
+          <ThemeToggle />
         </div>
 
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">

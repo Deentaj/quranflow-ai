@@ -20,6 +20,8 @@ import WeeklyReportPage from "./pages/WeeklyReportPage";
 import CommunityFeedPage from "./pages/CommunityFeedPage";
 import ReconnectPage from "./pages/ReconnectPage";
 import ProfilePage from "./pages/ProfilePage";
+import ChallengesPage from "./pages/ChallengesPage";
+import ReadingTrackerPage from "./pages/ReadingTrackerPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/community" element={<ProtectedRoute><CommunityFeedPage /></ProtectedRoute>} />
             <Route path="/weekly-report" element={<ProtectedRoute><WeeklyReportPage /></ProtectedRoute>} />
             <Route path="/reconnect" element={<ProtectedRoute><ReconnectPage /></ProtectedRoute>} />
+            <Route path="/challenges" element={<ProtectedRoute><ChallengesPage /></ProtectedRoute>} />
+            <Route path="/reading-tracker" element={<ProtectedRoute><ReadingTrackerPage /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
