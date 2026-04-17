@@ -19,23 +19,11 @@ interface Challenge {
   xp_reward: number;
 }
 
-const CHALLENGE_TEMPLATES = [
+const FALLBACK_TEMPLATES = [
   { challenge_type: 'read_ayah', title: 'Read 3 Ayahs', description: 'Read and reflect on 3 different ayahs today', target_value: 3, xp_reward: 15 },
   { challenge_type: 'reflect', title: 'Write a Reflection', description: 'Write a heartfelt reflection on an ayah', target_value: 1, xp_reward: 20 },
   { challenge_type: 'bookmark', title: 'Bookmark 2 Verses', description: 'Save 2 verses that speak to you', target_value: 2, xp_reward: 10 },
-  { challenge_type: 'companion', title: 'Ask the Companion', description: 'Have a spiritual conversation with the AI companion', target_value: 1, xp_reward: 15 },
-  { challenge_type: 'streak', title: 'Maintain Your Streak', description: 'Complete your daily ayah to keep your streak alive', target_value: 1, xp_reward: 25 },
-  { challenge_type: 'community', title: 'Share with Community', description: 'Share a public reflection with the community', target_value: 1, xp_reward: 20 },
 ];
-
-function getDailyChallenges(dayOfYear: number): typeof CHALLENGE_TEMPLATES {
-  const shuffled = [...CHALLENGE_TEMPLATES].sort((a, b) => {
-    const hashA = (dayOfYear * 31 + a.challenge_type.charCodeAt(0)) % 100;
-    const hashB = (dayOfYear * 31 + b.challenge_type.charCodeAt(0)) % 100;
-    return hashA - hashB;
-  });
-  return shuffled.slice(0, 3);
-}
 
 export default function ChallengesPage() {
   const { user } = useAuth();
@@ -49,32 +37,47 @@ export default function ChallengesPage() {
     if (!user) return;
     const today = new Date().toISOString().split('T')[0];
 
-    const { data } = await supabase
+    // 1. Get today's already-assigned challenges for this user
+    const { data: existing } = await supabase
       .from('daily_challenges')
       .select('*')
       .eq('user_id', user.id)
       .eq('date', today);
 
-    if (data && data.length > 0) {
-      setChallenges(data as Challenge[]);
-    } else {
-      const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-      const templates = getDailyChallenges(dayOfYear);
-      const newChallenges = templates.map(t => ({
+    // 2. Pull active global challenges curated by admins
+    const { data: globals } = await supabase
+      .from('global_challenges')
+      .select('challenge_type, title, description, target_value, xp_reward')
+      .eq('active', true);
+
+    const sourceList = (globals && globals.length > 0) ? globals : FALLBACK_TEMPLATES;
+
+    // 3. Determine which global challenges aren't yet assigned today (dedupe by title)
+    const existingTitles = new Set((existing ?? []).map(c => c.title));
+    const toInsert = sourceList
+      .filter(g => !existingTitles.has(g.title))
+      .map(g => ({
         user_id: user.id,
         date: today,
-        ...t,
+        challenge_type: g.challenge_type,
+        title: g.title,
+        description: g.description,
+        target_value: g.target_value,
+        xp_reward: g.xp_reward,
         current_value: 0,
         completed: false,
       }));
 
+    let allToday = (existing as Challenge[]) ?? [];
+    if (toInsert.length > 0) {
       const { data: inserted } = await supabase
         .from('daily_challenges')
-        .insert(newChallenges)
+        .insert(toInsert)
         .select();
-
-      if (inserted) setChallenges(inserted as Challenge[]);
+      if (inserted) allToday = [...allToday, ...(inserted as Challenge[])];
     }
+
+    setChallenges(allToday);
 
     // Total XP from all completed challenges
     const { data: allCompleted } = await supabase
