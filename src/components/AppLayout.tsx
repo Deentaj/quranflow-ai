@@ -3,10 +3,11 @@ import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard, BookOpen, MessageCircle, PenLine,
   BarChart3, Target, Bookmark, RefreshCw, User, LogOut, Sparkles, Users, FileText,
-  Swords, BookMarked
+  Swords, BookMarked, Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -29,6 +30,8 @@ const mobileNavItems = navItems.slice(0, 5);
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { signOut, profile } = useAuth();
+  const { isAdmin } = useIsAdmin();
+  const allNavItems = isAdmin ? [...navItems, { path: '/admin', label: 'Admin', icon: Shield }] : navItems;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -43,7 +46,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {navItems.map(({ path, label, icon: Icon }) => (
+          {allNavItems.map(({ path, label, icon: Icon }) => (
             <Link
               key={path}
               to={path}
