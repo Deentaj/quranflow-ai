@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [adminCode, setAdminCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const { signUp } = useAuth();
@@ -23,8 +24,18 @@ export default function RegisterPage() {
     if (password.length < 6) { toast.error('Password must be at least 6 characters.'); return; }
     setLoading(true);
     const { error } = await signUp(email, password, fullName);
+    if (error) { setLoading(false); toast.error(error.message); return; }
+
+    if (adminCode.trim()) {
+      // Wait briefly for session, then attempt redemption
+      const { supabase } = await import('@/integrations/supabase/client');
+      await new Promise(r => setTimeout(r, 400));
+      const { data, error: rpcError } = await supabase.rpc('redeem_admin_invite_code', { _code: adminCode.trim() });
+      if (rpcError || !data) toast.error('Admin code invalid or already used. Account created without admin role.');
+      else toast.success('Admin access granted!');
+    }
+
     setLoading(false);
-    if (error) { toast.error(error.message); return; }
     toast.success('Account created! Welcome to QuranFlow AI.');
     navigate('/onboarding');
   };
@@ -86,6 +97,10 @@ export default function RegisterPage() {
             <div>
               <Label htmlFor="password">Password</Label>
               <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" className="mt-1.5 rounded-xl" />
+            </div>
+            <div>
+              <Label htmlFor="adminCode" className="text-muted-foreground">Admin invite code <span className="text-xs">(optional)</span></Label>
+              <Input id="adminCode" value={adminCode} onChange={e => setAdminCode(e.target.value)} placeholder="Leave blank for normal signup" className="mt-1.5 rounded-xl font-mono text-sm" />
             </div>
             <Button type="submit" disabled={loading} className="w-full rounded-xl h-11">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create Account'}
