@@ -44,6 +44,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_invite_codes: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       ai_chats: {
         Row: {
           ai_response: string
@@ -136,6 +163,45 @@ export type Database = {
           target_value?: number
           title?: string
           user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      global_challenges: {
+        Row: {
+          active: boolean
+          challenge_type: string
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          target_value: number
+          title: string
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          active?: boolean
+          challenge_type: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          target_value?: number
+          title: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          active?: boolean
+          challenge_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          target_value?: number
+          title?: string
+          updated_at?: string
           xp_reward?: number
         }
         Relationships: []
@@ -384,6 +450,8 @@ export type Database = {
           ayah_reference: string | null
           created_at: string
           date: string
+          hidden: boolean
+          hidden_reason: string | null
           id: string
           is_public: boolean
           mood: Database["public"]["Enums"]["mood_type"] | null
@@ -395,6 +463,8 @@ export type Database = {
           ayah_reference?: string | null
           created_at?: string
           date?: string
+          hidden?: boolean
+          hidden_reason?: string | null
           id?: string
           is_public?: boolean
           mood?: Database["public"]["Enums"]["mood_type"] | null
@@ -406,6 +476,8 @@ export type Database = {
           ayah_reference?: string | null
           created_at?: string
           date?: string
+          hidden?: boolean
+          hidden_reason?: string | null
           id?: string
           is_public?: boolean
           mood?: Database["public"]["Enums"]["mood_type"] | null
@@ -415,14 +487,43 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      redeem_admin_invite_code: { Args: { _code: string }; Returns: boolean }
     }
     Enums: {
+      app_role: "admin" | "moderator" | "user"
       mood_type:
         | "stressed"
         | "calm"
@@ -557,6 +658,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "moderator", "user"],
       mood_type: [
         "stressed",
         "calm",
