@@ -25,6 +25,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ChallengesPage from "./pages/ChallengesPage";
 import ReadingTrackerPage from "./pages/ReadingTrackerPage";
 import NotFound from "./pages/NotFound";
+import AuthCallbackPage from './pages/AuthCallbackPage';
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="/admin" element={<AdminRoute><AdminPanelPage /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/auth/callback" element={<AuthCallbackPage />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
