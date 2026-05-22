@@ -50,7 +50,7 @@ export async function fetchAyah(verseKey?: string): Promise<AyahData | null> {
     
     const [arabicRes, translationRes, surahRes] = await Promise.all([
       fetch(`${BASE_URL}/quran/verses/uthmani?verse_key=${key}`),
-      fetch(`${BASE_URL}/quran/translations/131?verse_key=${key}`),
+      fetch(`${BASE_URL}/quran/translations/20?verse_key=${key}`),
       fetch(`${BASE_URL}/chapters/${surah}?language=en`),
     ]);
 
