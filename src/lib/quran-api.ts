@@ -1,4 +1,12 @@
-const BASE_URL = 'https://api.quran.com/api/v4';
+import { supabase } from '@/integrations/supabase/client';
+
+async function qfFetch(path: string, query?: Record<string, string>): Promise<any> {
+  const { data, error } = await supabase.functions.invoke('quran-api', {
+    body: { path, query },
+  });
+  if (error) throw error;
+  return data;
+}
 
 export interface AyahData {
   verseKey: string;
@@ -47,24 +55,19 @@ export async function fetchAyah(verseKey?: string): Promise<AyahData | null> {
   try {
     const key = verseKey || getDailyVerseKey();
     const [surah, verse] = key.split(':').map(Number);
-    
-    const [arabicRes, translationRes, surahRes] = await Promise.all([
-      fetch(`${BASE_URL}/quran/verses/uthmani?verse_key=${key}`),
-      fetch(`${BASE_URL}/quran/translations/20?verse_key=${key}`),
-      fetch(`${BASE_URL}/chapters/${surah}?language=en`),
-    ]);
 
-    const arabicData = await arabicRes.json();
-    const translationData = await translationRes.json();
-    const surahData = await surahRes.json();
+    const [arabicData, translationData, surahData] = await Promise.all([
+      qfFetch('/quran/verses/uthmani', { verse_key: key }),
+      qfFetch('/quran/translations/20', { verse_key: key }),
+      qfFetch(`/chapters/${surah}`, { language: 'en' }),
+    ]);
 
     const arabicText = arabicData.verses?.[0]?.text_uthmani || '';
     const translationText = translationData.translations?.[0]?.text?.replace(/<[^>]*>/g, '') || '';
 
     let audioUrl: string | null = null;
     try {
-      const recitationRes = await fetch(`${BASE_URL}/recitations/7/by_ayah/${key}`);
-      const recitationData = await recitationRes.json();
+      const recitationData = await qfFetch(`/recitations/7/by_ayah/${key}`);
       if (recitationData.audio_files?.[0]?.url) {
         audioUrl = `https://verses.quran.com/${recitationData.audio_files[0].url}`;
       }
@@ -88,8 +91,7 @@ export async function fetchAyah(verseKey?: string): Promise<AyahData | null> {
 
 export async function fetchTafsir(verseKey: string): Promise<string | null> {
   try {
-    const res = await fetch(`${BASE_URL}/quran/tafsirs/169?verse_key=${verseKey}`);
-    const data = await res.json();
+    const data = await qfFetch('/quran/tafsirs/169', { verse_key: verseKey });
     const text = data.tafsirs?.[0]?.text || '';
     return text.replace(/<[^>]*>/g, '') || null;
   } catch (error) {
