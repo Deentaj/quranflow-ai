@@ -29,7 +29,7 @@ export default function WeeklyReportPage() {
     if (!reportRef.current) return;
     const html2pdf = (await import('html2pdf.js')).default;
     const opt = {
-      margin: [0.75, 0.75],
+      margin: [0.75, 0.75] as [number, number],
       filename: `weekly-report-${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
