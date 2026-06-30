@@ -33,7 +33,7 @@ export default function WeeklyReportPage() {
       filename: `weekly-report-${new Date().toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg' as const, quality: 0.98 },
       html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' as const },
     };
     html2pdf().set(opt).from(reportRef.current).save();
   };
